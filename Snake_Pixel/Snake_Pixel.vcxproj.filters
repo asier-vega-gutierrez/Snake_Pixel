@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\glad.c" />
+    <ClCompile Include="src\frontend\shader.cpp" />
+    <ClCompile Include="src\frontend\VBO.cpp" />
+    <ClCompile Include="src\frontend\VAO.cpp" />
+    <ClCompile Include="src\frontend\EBO.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\frontend\Window.h" />
+    <ClInclude Include="src\backend\snake.h" />
+    <ClInclude Include="src\backend\point.h" />
+    <ClInclude Include="src\frontend\shader.h" />
+    <ClInclude Include="src\frontend\VBO.h" />
+    <ClInclude Include="src\frontend\VAO.h" />
+    <ClInclude Include="src\frontend\EBO.h" />
+    <ClInclude Include="src\constants.h" />
+    <ClInclude Include="src\frontend\Box.h" />
+  </ItemGroup>
+</Project>
