@@ -1,9 +1,9 @@
 
-#include "frontend/window.h"
-#include "backend/snake.h"
 #include <iostream>
 #include <string> 
 
+#include "frontend/window.h"
+#include "backend/snake.h"
 #include "backend/point.h"
 
 
@@ -11,7 +11,10 @@ int main() {
 
 
     Window screen(10);
-	screen.set_box_grid(0, 0, 1);
+	screen.set_box_grid(3, 1, 1);
+    screen.set_box_grid(3, 2, 1);
+    screen.set_box_grid(4, 1, 1);
+    screen.set_box_grid(3, 5, 1);
     screen.load();
 
     Snake snake;
@@ -19,9 +22,6 @@ int main() {
 
     std::string a = std::to_string(snake.get_head_p().x);
     std::cout << a << std::endl;
-
-    
-
   
 
 }

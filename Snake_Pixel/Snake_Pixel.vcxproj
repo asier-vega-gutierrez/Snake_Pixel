@@ -71,20 +71,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\ASIER\PixelSnakeGame\PixelSnakeGame\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\ASIER\PixelSnakeGame\PixelSnakeGame\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\ASIER\Snake_Pixel\Snake_Pixel\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\ASIER\Snake_Pixel\Snake_Pixel\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\ASIER\PixelSnakeGame\PixelSnakeGame\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\ASIER\PixelSnakeGame\PixelSnakeGame\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\ASIER\Snake_Pixel\Snake_Pixel\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\ASIER\Snake_Pixel\Snake_Pixel\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\ASIER\PixelSnakeGame\PixelSnakeGame\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\ASIER\PixelSnakeGame\PixelSnakeGame\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\ASIER\Snake_Pixel\Snake_Pixel\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\ASIER\Snake_Pixel\Snake_Pixel\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\ASIER\PixelSnakeGame\PixelSnakeGame\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\ASIER\PixelSnakeGame\PixelSnakeGame\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\ASIER\Snake_Pixel\Snake_Pixel\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\ASIER\Snake_Pixel\Snake_Pixel\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

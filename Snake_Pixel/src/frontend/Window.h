@@ -3,24 +3,25 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <vector>
+
 #include "shader.h"
 #include "VAO.h"
 #include "VBO.h"
 #include "EBO.h"
 #include "constants.h"
-#include <vector>
 #include "Box.h"
 
-
+// Class to manage the game window and its grapihcs
 class Window{
 	private:
-		//Atributes
+		// Atributes
 		GLFWwindow* window = {};
 		int height = 800;
 		int width = 800;
 		const char* title = "actual screen";
 
-		// Grid size is form 0 to n so add 1 for beter user experience
+		// Grid size is form 0 to n so add 1 for better user experience
 		int _gridSize = {};
 		// Calculate the size of each cell in the grid
 		const float _cellSize = {};
@@ -59,7 +60,7 @@ class Window{
 			gladLoadGL();
 			//Define the opengl working zone
 			glViewport(0, 0, width, height);
-			//Generates Shader object using shaders defualt.vert and default.frag
+			//Generates Shader object using shader files
 			Shader shaderProgram(vertexShaderSource, fragmentShaderSource);
 
 			//GRID
@@ -82,14 +83,18 @@ class Window{
 			boxVAO.Bind();
 			// Generate grid filled box vertices
 			std::vector <GLfloat> gridBoxesVertices = {};
-			for (int i = 0; i < 10; i++) { 
-				GLfloat* boxVertices = generate_box(-1.0f + _cellSize / 2.0f + i * _cellSize, -1.0f + _cellSize / 2.0f + i * _cellSize);
-				for (int j = 0; j < 6 * 3; j++) {
-					gridBoxesVertices.push_back(boxVertices[j]);
+			for (int i = 0; i < _gridSize; ++i) {
+				for (int j = 0; j < _gridSize; ++j) {
+					Box& box = _boxes[i][j];
+					if (box.get_type() >= 1) {
+						GLfloat* boxVertices = generate_box(-1.0f + _cellSize / 2.0f + box.get_x() * _cellSize, -1.0f + _cellSize / 2.0f + box.get_y() * _cellSize);
+						for (int j = 0; j < 6 * 3; j++) {
+							gridBoxesVertices.push_back(boxVertices[j]);
+						}
+						delete[] boxVertices;
+					}
 				}
-				delete[] boxVertices;
 			}
-			
 			// Generates Vertex Buffer Object and links it to box vertices
 			VBO boxVBO(gridBoxesVertices.data(), gridBoxesVertices.size() * sizeof(GLfloat));
 			// Links VBO to VAO
@@ -125,25 +130,29 @@ class Window{
 			boxVAO.Delete();
 			shaderProgram.Delete();
 			
+			// Empty memory
 			delete[] gridVertices;
 
 			return 0;
 		}
 
+		// Function to terminate the window
 		int terminate() {
 			glfwDestroyWindow(window);
 			glfwTerminate();
 			return 0;
 		}
 
+		// Function to set a box object on the grid vector
 		int set_box_grid(int x, int y, int type) {
-			Box box(x, y ,type);
-			_boxes[box._x][box._y] = box;
-			std::cout << "Box setted at x: " << _boxes[x][y]._x << " y: " << _boxes[x][y]._y << " type: " << _boxes[x][y]._type << std::endl;
+			Box box(x, y, type);
+			_boxes[box.get_x()][box.get_y()] = box;
 			return 0;
 		}
 
 	private:
+
+		// Function to generate grid vertices (horizontal aand vertical lines)
 		GLfloat* generate_grid() {
 			GLfloat* vertices = new GLfloat[_gridSize * 4 * 3]();
 			int index = 0;
@@ -167,6 +176,7 @@ class Window{
 			return vertices;
 		}
 
+		// Funtion to generate box vertices based on the cell size and offset
 		GLfloat* generate_box(float offsetX, float offsetY) {
 			// Define the offset for the box position
 			// Define box vertices based on the cell size and offset
