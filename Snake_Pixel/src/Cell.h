@@ -1,6 +1,6 @@
 #pragma once
 //Class to manege boxes on the grid
-class Box {
+class Cell {
 	private:
 		// Atributes
 		int _x = {};
@@ -9,9 +9,9 @@ class Box {
 
     public:
 		// Default constructor
-		Box() : _x(0), _y(0), _type(0) {}
+		Cell() : _x(0), _y(0), _type(0) {}
 		// Constructor
-		Box(int x, int y, int type) :
+		Cell(int x, int y, int type) :
 			_x(x), _y(y), _type(type) {
 		}
 

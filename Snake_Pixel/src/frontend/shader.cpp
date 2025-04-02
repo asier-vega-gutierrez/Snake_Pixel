@@ -1,7 +1,7 @@
 #include "shader.h"
 
 
-//Constructor that build the Shader Program from 2 different shaders
+// Constructor that build the Shader Program from 2 different shaders
 Shader::Shader(const char* vertexFile, const char* fragmentFile) {
 	//Create Vertex Shader Object and get its reference
 	GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -31,12 +31,17 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile) {
 
 }
 
-//Activates the Shader Program
+// Activates the Shader Program
 void Shader::Activate() {
 	glUseProgram(ID);
 }
 
-//Deletes the Shader Program
+// Deletes the Shader Program
 void Shader::Delete() {
 	glDeleteProgram(ID);
+}
+
+// Set the color of the shader
+void Shader::setColor(float r, float g, float b) {
+	glUniform3f(glGetUniformLocation(ID, "uColor"), r, g, b);
 }

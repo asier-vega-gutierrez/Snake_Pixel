@@ -10,7 +10,7 @@
 #include "VBO.h"
 #include "EBO.h"
 #include "constants.h"
-#include "Box.h"
+#include "Cell.h"
 
 // Class to manage the game window and its grapihcs
 class Window{
@@ -25,15 +25,15 @@ class Window{
 		int _gridSize = {};
 		// Calculate the size of each cell in the grid
 		const float _cellSize = {};
-		// Al filled boxes on grid 
-		std::vector<std::vector<Box>> _boxes = {};
+		// Al filled cells on grid 
+		std::vector<std::vector<Cell>> _cells = {};
 
 	public:
 		// Constructor
 		Window(int gridSize): 
 			_gridSize(gridSize + 1),
 			_cellSize(2.0f / (gridSize)),
-			_boxes(gridSize + 1, std::vector<Box>(gridSize + 1)) {
+			_cells(gridSize + 1, std::vector<Cell>(gridSize + 1)) {
 
 			// Configure glfw
 			glfwInit();
@@ -42,10 +42,13 @@ class Window{
 			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 			// Using core profile 
 			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+			// Set default map borders
+			setUpCells();
+
 		}
 
 		int load() {
-			//Create glfw window object
+			// Create glfw window object
 			window = glfwCreateWindow(width, height, title, NULL, NULL);
 			if (window == NULL) {
 				std::cout << "ERRO could not create GLFW window" << std::endl;
@@ -56,11 +59,11 @@ class Window{
 			glfwMakeContextCurrent(window);
 		
 			//CONFIGURE BASE WINDOW
-			//Load opengl
+			// Load opengl
 			gladLoadGL();
-			//Define the opengl working zone
+			// Define the opengl working zone
 			glViewport(0, 0, width, height);
-			//Generates Shader object using shader files
+			// Generates Shader object using shader files
 			Shader shaderProgram(vertexShaderSource, fragmentShaderSource);
 
 			//GRID
@@ -82,19 +85,7 @@ class Window{
 			VAO boxVAO;
 			boxVAO.Bind();
 			// Generate grid filled box vertices
-			std::vector <GLfloat> gridBoxesVertices = {};
-			for (int i = 0; i < _gridSize; ++i) {
-				for (int j = 0; j < _gridSize; ++j) {
-					Box& box = _boxes[i][j];
-					if (box.get_type() >= 1) {
-						GLfloat* boxVertices = generate_box(-1.0f + _cellSize / 2.0f + box.get_x() * _cellSize, -1.0f + _cellSize / 2.0f + box.get_y() * _cellSize);
-						for (int j = 0; j < 6 * 3; j++) {
-							gridBoxesVertices.push_back(boxVertices[j]);
-						}
-						delete[] boxVertices;
-					}
-				}
-			}
+			std::vector <GLfloat> gridBoxesVertices = generate_grid_boxes_vertices();
 			// Generates Vertex Buffer Object and links it to box vertices
 			VBO boxVBO(gridBoxesVertices.data(), gridBoxesVertices.size() * sizeof(GLfloat));
 			// Links VBO to VAO
@@ -111,9 +102,13 @@ class Window{
 				glClear(GL_COLOR_BUFFER_BIT);
 				//Tell OpenGL which Shader Program we want to use
 				shaderProgram.Activate();
+				// Set the color uniform to white for the grid
+				shaderProgram.setColor(1.0f, 1.0f, 1.0f);
 				// Bind the grid VAO and draw the grid
 				gridVAO.Bind();
 				glDrawArrays(GL_LINES, 0, _gridSize * 4);
+				// Set the color uniform to red for the boxes
+				shaderProgram.setColor(1.0f, 0.0f, 0.0f);
 				// Bind the triangle VAO and draw the triangle
 				boxVAO.Bind();
 				glDrawArrays(GL_TRIANGLES, 0, gridBoxesVertices.size() / 3);
@@ -145,8 +140,8 @@ class Window{
 
 		// Function to set a box object on the grid vector
 		int set_box_grid(int x, int y, int type) {
-			Box box(x, y, type);
-			_boxes[box.get_x()][box.get_y()] = box;
+			Cell cell(x, y, type);
+			_cells[cell.get_x()][cell.get_y()] = cell;
 			return 0;
 		}
 
@@ -204,6 +199,48 @@ class Window{
 			return vertices;
 		}
 
+		std::vector <GLfloat> generate_grid_boxes_vertices() {
+			std::vector <GLfloat> gridBoxesVertices = {};
+			for (int i = 0; i < _gridSize; ++i) {
+				for (int j = 0; j < _gridSize; ++j) {
+					Cell& Cell = _cells[i][j];
+					if (Cell.get_type() >= 1) {
+						GLfloat* boxVertices = generate_box(-1.0f + _cellSize / 2.0f + Cell.get_x() * _cellSize, -1.0f + _cellSize / 2.0f + Cell.get_y() * _cellSize);
+						for (int j = 0; j < 6 * 3; j++) {
+							gridBoxesVertices.push_back(boxVertices[j]);
+						}
+						delete[] boxVertices;
+					}
+				}
+			}
+			return gridBoxesVertices;
+		}
+
+		int setUpCells() {
+			// Set al cel to type 0 empty
+			for (int i = 0; i < _gridSize; ++i) {
+				for (int j = 0; j < _gridSize; ++j) {
+					Cell cell(i, j, 0);
+					_cells[i][j] = cell;
+				}
+			}
+			// Set borders of the grid to cell type 1
+			for (int i = 0; i < _gridSize; ++i) {
+				// Top border
+				Cell cell_h_top(i, 0, 1);
+				_cells[i][0] = cell_h_top;
+				// Bottom border
+				Cell cell_h_bottom(i, _gridSize - 2, 1);
+				_cells[i][_gridSize - 1] = cell_h_bottom;
+				// Left border
+				Cell cell_v_left(0, i, 1);
+				_cells[0][i] = cell_v_left;
+				// Right border
+				Cell cell_v_right(_gridSize - 2, i, 1);
+				_cells[_gridSize - 2][i] = cell_v_right;
+			}
+			return 0;
+		};
 
 		
 		

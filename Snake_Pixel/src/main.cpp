@@ -10,11 +10,7 @@
 int main() {
 
 
-    Window screen(10);
-	screen.set_box_grid(3, 1, 1);
-    screen.set_box_grid(3, 2, 1);
-    screen.set_box_grid(4, 1, 1);
-    screen.set_box_grid(3, 5, 1);
+    Window screen(50);
     screen.load();
 
     Snake snake;
