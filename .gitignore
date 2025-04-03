@@ -3,9 +3,6 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-# My gitingore
-/src/glad.c
-
 # User-specific files
 *.rsuser
 *.suo
@@ -365,4 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+# My gitignore
 /Snake_Pixel/src/glad.c

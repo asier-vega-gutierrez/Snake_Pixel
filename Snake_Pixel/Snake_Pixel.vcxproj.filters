@@ -7,6 +7,7 @@
     <ClCompile Include="src\frontend\VBO.cpp" />
     <ClCompile Include="src\frontend\VAO.cpp" />
     <ClCompile Include="src\frontend\EBO.cpp" />
+    <ClCompile Include="src\frontend\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\frontend\Window.h" />
@@ -17,6 +18,6 @@
     <ClInclude Include="src\frontend\VAO.h" />
     <ClInclude Include="src\frontend\EBO.h" />
     <ClInclude Include="src\constants.h" />
-    <ClInclude Include="src\Cell.h" />
+    <ClInclude Include="src\frontend\Cell.h" />
   </ItemGroup>
 </Project>

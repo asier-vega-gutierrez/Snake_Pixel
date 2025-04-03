@@ -151,12 +151,13 @@
     <ClCompile Include="src\frontend\Shader.cpp" />
     <ClCompile Include="src\frontend\VAO.cpp" />
     <ClCompile Include="src\frontend\VBO.cpp" />
+    <ClCompile Include="src\frontend\Window.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\constants.h" />
-    <ClInclude Include="src\Cell.h" />
+    <ClInclude Include="src\frontend\Cell.h" />
     <ClInclude Include="src\frontend\EBO.h" />
     <ClInclude Include="src\frontend\Shader.h" />
     <ClInclude Include="src\backend\point.h" />
