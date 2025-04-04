@@ -151,20 +151,19 @@
     <ClCompile Include="src\frontend\Shader.cpp" />
     <ClCompile Include="src\frontend\VAO.cpp" />
     <ClCompile Include="src\frontend\VBO.cpp" />
-    <ClCompile Include="src\frontend\Window.cpp" />
-    <ClCompile Include="src\glad.c" />
-    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\frontend\glad.c" />
+    <ClCompile Include="src\MAIN.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\constants.h" />
-    <ClInclude Include="src\frontend\Cell.h" />
+    <ClInclude Include="src\Cell.cpp" />
     <ClInclude Include="src\frontend\EBO.h" />
+    <ClInclude Include="src\frontend\gladcode.h" />
     <ClInclude Include="src\frontend\Shader.h" />
-    <ClInclude Include="src\backend\point.h" />
-    <ClInclude Include="src\backend\snake.h" />
+    <ClInclude Include="src\Snake.cpp" />
     <ClInclude Include="src\frontend\VAO.h" />
     <ClInclude Include="src\frontend\VBO.h" />
-    <ClInclude Include="src\frontend\Window.h" />
+    <ClInclude Include="src\Window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

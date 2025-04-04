@@ -363,4 +363,3 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # My gitignore
-/Snake_Pixel/src/glad.c
