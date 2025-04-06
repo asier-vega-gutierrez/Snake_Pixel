@@ -9,13 +9,15 @@
 
 int main() {
 
+	int map_size = 50;
 
-    Window screen(50);
-	screen.set_box_grid(3, 3, 2);
-    screen.set_box_grid(4, 4, 3);
+    Snake* snake = new Snake(map_size);
+
+    Window screen(map_size, snake);
+
     screen.load();
 
-    Snake snake;
+    delete snake;
   
 
 }

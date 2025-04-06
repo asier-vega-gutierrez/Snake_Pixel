@@ -6,6 +6,10 @@ class Cell {
 		int _x = {};
 		int _y = {};
 		int _type = {};
+		//Type_0 empty
+		//Type_1 red, limits
+		//Type_2 green, snake
+		//Type_3 blue, food
 
     public:
 		// Default constructor

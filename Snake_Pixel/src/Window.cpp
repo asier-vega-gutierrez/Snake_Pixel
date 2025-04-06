@@ -11,6 +11,7 @@
 #include "frontend/EBO.h"
 #include "frontend/gladcode.h"
 #include "Cell.cpp"
+#include "Snake.cpp"
 
 
 
@@ -18,7 +19,7 @@
 class Window {
 private:
     // Attributes
-    GLFWwindow* window = {};
+    GLFWwindow* _window = {};
     int height = 800;
     int width = 800;
     const char* title = "actual screen";
@@ -30,14 +31,23 @@ private:
     std::vector<std::vector<Cell>> _cells = {};
     // Flag to indicate when the screen needs to be updated
     bool updateWindow = false;
+	// Snake object
+    Snake* _snake = {};
+
+    // Vertices for cells in grid (can be updatables)
+	std::vector<GLfloat> gridBoxesVerticesType1 = {};
+    std::vector<GLfloat> gridBoxesVerticesType2 = {};
+    std::vector<GLfloat> gridBoxesVerticesType3 = {};
+
 
 public:
 
     // Constructor
-    Window(int gridSize) :
+    Window(int gridSize, Snake* snake) :
         _gridSize(gridSize + 1),
         _cellSize(2.0f / (gridSize)),
-        _cells(gridSize + 1, std::vector<Cell>(gridSize + 1)) {
+        _cells(gridSize + 1, std::vector<Cell>(gridSize + 1)),
+        _snake(snake){
 
         // Configure glfw
         glfwInit();
@@ -53,16 +63,18 @@ public:
     int load() {
         // CONFIGURE BASE WINDOW
         // Create glfw window object
-        window = glfwCreateWindow(width, height, title, NULL, NULL);
-        if (window == NULL) {
+        _window = glfwCreateWindow(width, height, title, NULL, NULL);
+        if (_window == NULL) {
             std::cout << "ERROR could not create GLFW window" << std::endl;
             terminate();
             return -1;
         }
+        // Set the user pointer to this instance
+        glfwSetWindowUserPointer(_window, this);
         // Establish as current
-        glfwMakeContextCurrent(window);
+        glfwMakeContextCurrent(_window);
         // Set the key callback function
-        glfwSetKeyCallback(window, key_callback);
+        glfwSetKeyCallback(_window, key_callback);
         // Load opengl
         gladLoadGL();
         // Define the opengl working zone
@@ -85,45 +97,18 @@ public:
         gridVBO.Unbind();
 
         // BOXES
-        // Generates Vertex Array Object and binds it
-        VAO boxVAOType1;
-        boxVAOType1.Bind();
-        // Generate grid filled box vertices
-        std::vector<GLfloat> gridBoxesVerticesType1 = generate_grid_boxes_vertices(1);
-        // Generates Vertex Buffer Object and links it to box vertices
-        VBO boxVBOType1(gridBoxesVerticesType1.data(), gridBoxesVerticesType1.size() * sizeof(GLfloat));
-        // Links VBO to VAO
-        boxVAOType1.LinkVBO(boxVBOType1, 0);
-        // Unbind all to prevent accidentally modifying them
-        boxVAOType1.Unbind();
-        boxVBOType1.Unbind();
+        // Initialize VAOs and VBOs for the boxes
+        VAO boxVAOType1, boxVAOType2, boxVAOType3;
+		VBO boxVBOType1(nullptr, 0), boxVBOType2(nullptr, 0), boxVBOType3(nullptr, 0);
 
-        VAO boxVAOType2;
-        boxVAOType2.Bind();
-        // Generate grid filled box vertices
-        std::vector<GLfloat> gridBoxesVerticesType2 = generate_grid_boxes_vertices(2);
-        // Generates Vertex Buffer Object and links it to box vertices
-        VBO boxVBOType2(gridBoxesVerticesType2.data(), gridBoxesVerticesType2.size() * sizeof(GLfloat));
-        // Links VBO to VAO
-        boxVAOType2.LinkVBO(boxVBOType2, 0);
-        // Unbind all to prevent accidentally modifying them
-        boxVAOType2.Unbind();
-        boxVBOType2.Unbind();
 
-        VAO boxVAOType3;
-        boxVAOType3.Bind();
-        // Generate grid filled box vertices
-        std::vector<GLfloat> gridBoxesVerticesType3 = generate_grid_boxes_vertices(3);
-        // Generates Vertex Buffer Object and links it to box vertices
-        VBO boxVBOType3(gridBoxesVerticesType3.data(), gridBoxesVerticesType3.size() * sizeof(GLfloat));
-        // Links VBO to VAO
-        boxVAOType3.LinkVBO(boxVBOType3, 0);
-        // Unbind all to prevent accidentally modifying them
-        boxVAOType3.Unbind();
-        boxVBOType3.Unbind();
 
         // Manage all events of the window while it is up
-        while (!glfwWindowShouldClose(window)) {
+        while (!glfwWindowShouldClose(_window)) {
+
+			// Call update to update the window with ne information
+            update(boxVAOType1, boxVBOType1, boxVAOType2, boxVBOType2, boxVAOType3, boxVBOType3);
+
             // Specify the color of the background
             glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
             // Clean the back buffer and assign the new color to it
@@ -135,24 +120,21 @@ public:
             shaderProgram.setColor(1.0f, 1.0f, 1.0f);
             gridVAO.Bind();
             glDrawArrays(GL_LINES, 0, _gridSize * 4);
-
             // Draw type 1 vertices as triangles
             shaderProgram.setColor(1.0f, 0.0f, 0.0f);
             boxVAOType1.Bind();
             glDrawArrays(GL_TRIANGLES, 0, gridBoxesVerticesType1.size() / 3);
-
             // Draw type 2 vertices as triangles
             shaderProgram.setColor(0.0f, 1.0f, 0.0f);
             boxVAOType2.Bind();
             glDrawArrays(GL_TRIANGLES, 0, gridBoxesVerticesType2.size() / 3);
-
             // Draw type 3 vertices as triangles
             shaderProgram.setColor(0.0f, 0.0f, 1.0f);
             boxVAOType3.Bind();
             glDrawArrays(GL_TRIANGLES, 0, gridBoxesVerticesType3.size() / 3);
 
             // Swap the back buffer with the front buffer
-            glfwSwapBuffers(window);
+            glfwSwapBuffers(_window);
             // Take care of all GLFW events
             glfwPollEvents();
         }
@@ -176,7 +158,7 @@ public:
 
     // Function to terminate the window
     int terminate() {
-        glfwDestroyWindow(window);
+        glfwDestroyWindow(_window);
         glfwTerminate();
         return 0;
     }
@@ -188,7 +170,9 @@ public:
         return 0;
     }
 
+
 private:
+
     // Function to generate grid vertices (horizontal and vertical lines)
     GLfloat* generate_grid() {
         GLfloat* vertices = new GLfloat[_gridSize * 4 * 3]();
@@ -260,6 +244,7 @@ private:
         return gridBoxesVertices;
     }
 
+    // Function to set up the map limits
     int setUpCells() {
         // Set all cells to type 0 (empty)
         for (int i = 0; i < _gridSize; ++i) {
@@ -289,7 +274,12 @@ private:
     // Static key callback function
     static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
         if (action == GLFW_PRESS) {
+            Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
             switch (key) {
+			case GLFW_KEY_ENTER:
+				std::cout << "Enter key pressed" << std::endl;
+                win->_snake->callback_start();
+				break;
             case GLFW_KEY_ESCAPE:
                 glfwSetWindowShouldClose(window, true);
                 break;
@@ -305,18 +295,47 @@ private:
             case GLFW_KEY_D:
                 std::cout << "D key pressed" << std::endl;
                 break;
-                // Add more cases for other keys as needed
             }
         }
     }
 
-
-    int update() {
-        Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
-        if (win) {
-            win->updateWindow = true;
-            std::cout << "Update need call to update Asier" << std::endl;
+    // Function to set a snake object on the grid vector
+    int set_snake() {
+        for (Cell cell : _snake->get_body()) {
+            _cells[cell.get_x()][cell.get_y()] = cell;
+            //std::cout << "Snake cell at (" << cell.get_x() << ", " << cell.get_y() << ")" << std::endl;
         }
         return 0;
     }
+
+	// Function to update the window with new information
+    void update(VAO& boxVAOType1, VBO& boxVBOType1, VAO& boxVAOType2, VBO& boxVBOType2, VAO& boxVAOType3, VBO& boxVBOType3) {
+       
+		// Recall set snake to update the snake position from backend iinformation
+        set_snake();
+
+        // Generate and link VBOs to VAOs
+		// Generate grid boxes vertices for each cell type 1
+        gridBoxesVerticesType1 = generate_grid_boxes_vertices(1);
+        boxVBOType1 = VBO(gridBoxesVerticesType1.data(), gridBoxesVerticesType1.size() * sizeof(GLfloat));
+        boxVAOType1.Bind();
+        boxVAOType1.LinkVBO(boxVBOType1, 0);
+        boxVAOType1.Unbind();
+        boxVBOType1.Unbind();
+        // Generate grid boxes vertices for each cell type 2
+        gridBoxesVerticesType2 = generate_grid_boxes_vertices(2);
+        boxVBOType2 = VBO(gridBoxesVerticesType2.data(), gridBoxesVerticesType2.size() * sizeof(GLfloat));
+        boxVAOType2.Bind();
+        boxVAOType2.LinkVBO(boxVBOType2, 0);
+        boxVAOType2.Unbind();
+        boxVBOType2.Unbind();
+        // Generate grid boxes vertices for each cell type 3
+        gridBoxesVerticesType3 = generate_grid_boxes_vertices(3);
+        boxVBOType3 = VBO(gridBoxesVerticesType3.data(), gridBoxesVerticesType3.size() * sizeof(GLfloat));
+        boxVAOType3.Bind();
+        boxVAOType3.LinkVBO(boxVBOType3, 0);
+        boxVAOType3.Unbind();
+        boxVBOType3.Unbind();
+    }
+
 };
