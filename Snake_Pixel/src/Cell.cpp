@@ -6,6 +6,7 @@ class Cell {
 		int _x = {};
 		int _y = {};
 		int _type = {};
+		bool _editable = false;
 		//Type_0 empty
 		//Type_1 red, limits
 		//Type_2 green, snake
@@ -13,10 +14,10 @@ class Cell {
 
     public:
 		// Default constructor
-		Cell() : _x(0), _y(0), _type(0) {}
+		Cell() : _x(0), _y(0), _type(0), _editable(false) {}
 		// Constructor
-		Cell(int x, int y, int type) :
-			_x(x), _y(y), _type(type) {
+		Cell(int x, int y, int type, bool editable) :
+			_x(x), _y(y), _type(type), _editable(editable) {
 		}
 
 		//Getters
@@ -29,6 +30,9 @@ class Cell {
 		int get_type() {
 			return _type;
 		}
+		bool get_editable() {
+			return _editable;
+		}
 
 		//Setters
 		void set_x(int x) {
@@ -40,5 +44,7 @@ class Cell {
 		void set_type(int type) {
 			_type = type;
 		}
-
+		void set_editable(bool editable) {
+			_editable = editable;
+		}
 };

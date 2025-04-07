@@ -57,7 +57,8 @@ public:
         // Using core profile 
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         // Set default map borders
-        setUpCells();
+        set_up_cells();
+		set_up_borders();
     }
 
     int load() {
@@ -163,14 +164,6 @@ public:
         return 0;
     }
 
-    // Function to set a box object on the grid vector
-    int set_box_grid(int x, int y, int type) {
-        Cell cell(x, y, type);
-        _cells[cell.get_x()][cell.get_y()] = cell;
-        return 0;
-    }
-
-
 private:
 
     // Function to generate grid vertices (horizontal and vertical lines)
@@ -244,28 +237,33 @@ private:
         return gridBoxesVertices;
     }
 
-    // Function to set up the map limits
-    int setUpCells() {
+	// Function to set up cell to type 0 (empty)
+    int set_up_cells() {
         // Set all cells to type 0 (empty)
         for (int i = 0; i < _gridSize; ++i) {
             for (int j = 0; j < _gridSize; ++j) {
-                Cell cell(i, j, 0);
+                Cell cell(i, j, 0, true);
                 _cells[i][j] = cell;
             }
         }
+		return 0;
+    }
+
+    // Function to set up map bordes type 1
+	int set_up_borders() {
         // Set borders of the grid to cell type 1
         for (int i = 0; i < _gridSize; ++i) {
             // Top border
-            Cell cell_h_top(i, 0, 1);
+            Cell cell_h_top(i, 0, 1, false);
             _cells[i][0] = cell_h_top;
             // Bottom border
-            Cell cell_h_bottom(i, _gridSize - 2, 1);
+            Cell cell_h_bottom(i, _gridSize - 2, 1, false);
             _cells[i][_gridSize - 1] = cell_h_bottom;
             // Left border
-            Cell cell_v_left(0, i, 1);
+            Cell cell_v_left(0, i, 1, false);
             _cells[0][i] = cell_v_left;
             // Right border
-            Cell cell_v_right(_gridSize - 2, i, 1);
+            Cell cell_v_right(_gridSize - 2, i, 1, false);
             _cells[_gridSize - 2][i] = cell_v_right;
         }
         return 0;
@@ -277,23 +275,32 @@ private:
             Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
             switch (key) {
 			case GLFW_KEY_ENTER:
-				std::cout << "Enter key pressed" << std::endl;
-                win->_snake->callback_start();
+                 std::cout << "Enter key pressed" << std::endl;
+				 win->_snake->callback_start(); // Start game
 				break;
             case GLFW_KEY_ESCAPE:
-                glfwSetWindowShouldClose(window, true);
+                std::cout << "Scape key pressed" << std::endl;
+                win->_snake->callback_pause(); //Pause game
+				glfwSetWindowShouldClose(window, true); // Close window
                 break;
+            case GLFW_KEY_SPACE:
+                std::cout << "Space key pressed" << std::endl;
+				win->_snake->callback_pause(); //Pause game
             case GLFW_KEY_W:
                 std::cout << "W key pressed" << std::endl;
+				win->_snake->callback_set_dir(0, 2); // Move up (y<0, x)
                 break;
             case GLFW_KEY_S:
                 std::cout << "S key pressed" << std::endl;
+                win->_snake->callback_set_dir(0, 1); // Move down (y>0, x)
                 break;
             case GLFW_KEY_A:
                 std::cout << "A key pressed" << std::endl;
+                win->_snake->callback_set_dir(2, 0); // Move left (y, x<0)
                 break;
             case GLFW_KEY_D:
                 std::cout << "D key pressed" << std::endl;
+                win->_snake->callback_set_dir(1, 0); // Move up (y<0, x)
                 break;
             }
         }
@@ -308,14 +315,31 @@ private:
         return 0;
     }
 
+	// Function to set all editable cells to type 0 (empty)
+    int set_cells_empty() {
+        // Set al editable cells to type 0 (empty)
+        for (int i = 0; i < _gridSize; ++i) {
+            for (int j = 0; j < _gridSize; ++j) {
+                Cell cell(i, j, 0, true);
+                if (_cells[i][j].get_editable() == true) {
+                    _cells[i][j] = cell;
+                }
+            }
+        }
+		return 0;
+    }
+
+
 	// Function to update the window with new information
     void update(VAO& boxVAOType1, VBO& boxVBOType1, VAO& boxVAOType2, VBO& boxVBOType2, VAO& boxVAOType3, VBO& boxVBOType3) {
        
 		// Recall set snake to update the snake position from backend iinformation
+        set_cells_empty();
         set_snake();
 
         // Generate and link VBOs to VAOs
 		// Generate grid boxes vertices for each cell type 1
+        gridBoxesVerticesType1 = {};
         gridBoxesVerticesType1 = generate_grid_boxes_vertices(1);
         boxVBOType1 = VBO(gridBoxesVerticesType1.data(), gridBoxesVerticesType1.size() * sizeof(GLfloat));
         boxVAOType1.Bind();
@@ -323,6 +347,7 @@ private:
         boxVAOType1.Unbind();
         boxVBOType1.Unbind();
         // Generate grid boxes vertices for each cell type 2
+        gridBoxesVerticesType2 = {};
         gridBoxesVerticesType2 = generate_grid_boxes_vertices(2);
         boxVBOType2 = VBO(gridBoxesVerticesType2.data(), gridBoxesVerticesType2.size() * sizeof(GLfloat));
         boxVAOType2.Bind();
@@ -330,6 +355,7 @@ private:
         boxVAOType2.Unbind();
         boxVBOType2.Unbind();
         // Generate grid boxes vertices for each cell type 3
+        gridBoxesVerticesType3 = {};
         gridBoxesVerticesType3 = generate_grid_boxes_vertices(3);
         boxVBOType3 = VBO(gridBoxesVerticesType3.data(), gridBoxesVerticesType3.size() * sizeof(GLfloat));
         boxVAOType3.Bind();
