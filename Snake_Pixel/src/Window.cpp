@@ -76,6 +76,8 @@ public:
         glfwMakeContextCurrent(_window);
         // Set the key callback function
         glfwSetKeyCallback(_window, key_callback);
+		// Set the window close callback function
+        glfwSetWindowCloseCallback(_window, window_close_callback);
         // Load opengl
         gladLoadGL();
         // Define the opengl working zone
@@ -269,6 +271,17 @@ private:
         return 0;
     }
 
+	// Function to manage window x close buttom callback 
+    static void window_close_callback(GLFWwindow* window) {
+        std::cout << "Window close button clicked!" << std::endl;
+        Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+        if (win) {
+            win->_snake->callback_pause(); //Pause game
+            glfwSetWindowShouldClose(window, true); // Close window
+            win->terminate(); // Call your cleanup function
+        }
+    }
+
     // Static key callback function
     static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
         if (action == GLFW_PRESS) {
@@ -281,7 +294,10 @@ private:
             case GLFW_KEY_ESCAPE:
                 std::cout << "Scape key pressed" << std::endl;
                 win->_snake->callback_pause(); //Pause game
+                std::cout << "Clossing Window..." << std::endl;
 				glfwSetWindowShouldClose(window, true); // Close window
+                std::cout << "Terminate..." << std::endl;
+                win->terminate(); // Terminate window
                 break;
             case GLFW_KEY_SPACE:
                 std::cout << "Space key pressed" << std::endl;
@@ -341,6 +357,7 @@ private:
 		// Generate grid boxes vertices for each cell type 1
         gridBoxesVerticesType1 = {};
         gridBoxesVerticesType1 = generate_grid_boxes_vertices(1);
+        boxVBOType1.Delete();
         boxVBOType1 = VBO(gridBoxesVerticesType1.data(), gridBoxesVerticesType1.size() * sizeof(GLfloat));
         boxVAOType1.Bind();
         boxVAOType1.LinkVBO(boxVBOType1, 0);
@@ -349,6 +366,7 @@ private:
         // Generate grid boxes vertices for each cell type 2
         gridBoxesVerticesType2 = {};
         gridBoxesVerticesType2 = generate_grid_boxes_vertices(2);
+        boxVBOType2.Delete();
         boxVBOType2 = VBO(gridBoxesVerticesType2.data(), gridBoxesVerticesType2.size() * sizeof(GLfloat));
         boxVAOType2.Bind();
         boxVAOType2.LinkVBO(boxVBOType2, 0);
@@ -357,6 +375,7 @@ private:
         // Generate grid boxes vertices for each cell type 3
         gridBoxesVerticesType3 = {};
         gridBoxesVerticesType3 = generate_grid_boxes_vertices(3);
+        boxVBOType3.Delete();
         boxVBOType3 = VBO(gridBoxesVerticesType3.data(), gridBoxesVerticesType3.size() * sizeof(GLfloat));
         boxVAOType3.Bind();
         boxVAOType3.LinkVBO(boxVBOType3, 0);
