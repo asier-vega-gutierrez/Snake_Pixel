@@ -4,6 +4,7 @@
 
 #include "Window.cpp"
 #include "Snake.cpp"
+#include "Menu.cpp"
 
 
 
@@ -13,11 +14,13 @@ int main() {
 
     Snake* snake = new Snake(map_size);
 
-    Window screen(map_size, snake);
+	Menu* menu = new Menu(snake);
+
+    Window screen(map_size, snake, menu);
 
     screen.load();
 
+    delete menu;
     delete snake;
-  
 
 }

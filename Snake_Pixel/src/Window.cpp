@@ -12,6 +12,7 @@
 #include "frontend/gladcode.h"
 #include "Cell.cpp"
 #include "Snake.cpp"
+#include "Menu.cpp"
 
 
 
@@ -33,6 +34,8 @@ private:
     bool updateWindow = false;
 	// Snake object
     Snake* _snake = {};
+	// Menu object
+	Menu* _menu = {};
 
     // Vertices for cells in grid (can be updatables)
 	std::vector<GLfloat> gridBoxesVerticesType1 = {};
@@ -42,12 +45,16 @@ private:
 
 public:
 
+	//Default constructor
+	Window() = default;
+
     // Constructor
-    Window(int gridSize, Snake* snake) :
+    Window(int gridSize, Snake* snake, Menu* menu) :
         _gridSize(gridSize + 1),
         _cellSize(2.0f / (gridSize)),
         _cells(gridSize + 1, std::vector<Cell>(gridSize + 1)),
-        _snake(snake){
+        _snake(snake),
+        _menu(menu){
 
         // Configure glfw
         glfwInit();
@@ -61,6 +68,12 @@ public:
 		set_up_borders();
     }
 
+    // Destructor 
+    ~Window() {
+        terminate();
+    }
+
+	// Function to load the window
     int load() {
         // CONFIGURE BASE WINDOW
         // Create glfw window object
@@ -103,8 +116,6 @@ public:
         // Initialize VAOs and VBOs for the boxes
         VAO boxVAOType1, boxVAOType2, boxVAOType3;
 		VBO boxVBOType1(nullptr, 0), boxVBOType2(nullptr, 0), boxVBOType3(nullptr, 0);
-
-
 
         // Manage all events of the window while it is up
         while (!glfwWindowShouldClose(_window)) {
@@ -161,6 +172,9 @@ public:
 
     // Function to terminate the window
     int terminate() {
+        std::cout << "Closing window..." << std::endl;
+        glfwSetWindowShouldClose(_window, true);
+        std::cout << "Terminating..." << std::endl;
         glfwDestroyWindow(_window);
         glfwTerminate();
         return 0;
@@ -271,57 +285,6 @@ private:
         return 0;
     }
 
-	// Function to manage window x close buttom callback 
-    static void window_close_callback(GLFWwindow* window) {
-        std::cout << "Window close button clicked!" << std::endl;
-        Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
-        if (win) {
-            win->_snake->callback_pause(); //Pause game
-            glfwSetWindowShouldClose(window, true); // Close window
-            win->terminate(); // Call your cleanup function
-        }
-    }
-
-    // Static key callback function
-    static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-        if (action == GLFW_PRESS) {
-            Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
-            switch (key) {
-			case GLFW_KEY_ENTER:
-                 std::cout << "Enter key pressed" << std::endl;
-				 win->_snake->callback_start(); // Start game
-				break;
-            case GLFW_KEY_ESCAPE:
-                std::cout << "Scape key pressed" << std::endl;
-                win->_snake->callback_pause(); //Pause game
-                std::cout << "Clossing Window..." << std::endl;
-				glfwSetWindowShouldClose(window, true); // Close window
-                std::cout << "Terminate..." << std::endl;
-                win->terminate(); // Terminate window
-                break;
-            case GLFW_KEY_SPACE:
-                std::cout << "Space key pressed" << std::endl;
-				win->_snake->callback_pause(); //Pause game
-            case GLFW_KEY_W:
-                std::cout << "W key pressed" << std::endl;
-				win->_snake->callback_set_dir(0, 2); // Move up (y<0, x)
-                break;
-            case GLFW_KEY_S:
-                std::cout << "S key pressed" << std::endl;
-                win->_snake->callback_set_dir(0, 1); // Move down (y>0, x)
-                break;
-            case GLFW_KEY_A:
-                std::cout << "A key pressed" << std::endl;
-                win->_snake->callback_set_dir(2, 0); // Move left (y, x<0)
-                break;
-            case GLFW_KEY_D:
-                std::cout << "D key pressed" << std::endl;
-                win->_snake->callback_set_dir(1, 0); // Move up (y<0, x)
-                break;
-            }
-        }
-    }
-
     // Function to set a snake object on the grid vector
     int set_snake() {
         for (Cell cell : _snake->get_body()) {
@@ -344,7 +307,6 @@ private:
         }
 		return 0;
     }
-
 
 	// Function to update the window with new information
     void update(VAO& boxVAOType1, VBO& boxVBOType1, VAO& boxVAOType2, VBO& boxVBOType2, VAO& boxVAOType3, VBO& boxVBOType3) {
@@ -382,5 +344,72 @@ private:
         boxVAOType3.Unbind();
         boxVBOType3.Unbind();
     }
+
+    // EVENTS //
+
+	// Funtion to manage key events callbacks
+    static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+        if (action == GLFW_PRESS) {
+            Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+            switch (key) {
+            case GLFW_KEY_ENTER:
+                std::cout << "Enter key pressed" << std::endl;
+				win->_menu->callback_start(); // Start game
+                break;
+            case GLFW_KEY_ESCAPE:
+                std::cout << "Scape key pressed" << std::endl;
+                win->_menu->callback_pause(); // Pause game
+                win->terminate(); // Terminate window
+                break;
+            case GLFW_KEY_SPACE:
+                std::cout << "Space key pressed" << std::endl;
+                win->_menu->callback_pause(); // Pause game
+                break;
+            case GLFW_KEY_W:
+                std::cout << "W key pressed" << std::endl;
+                win->_snake->callback_set_dir(0, 2); // Move up (y<0, x)
+                break;
+            case GLFW_KEY_S:
+                std::cout << "S key pressed" << std::endl;
+                win->_snake->callback_set_dir(0, 1); // Move down (y>0, x)
+                break;
+            case GLFW_KEY_A:
+                std::cout << "A key pressed" << std::endl;
+                win->_snake->callback_set_dir(2, 0); // Move left (y, x<0)
+                break;
+            case GLFW_KEY_D:
+                std::cout << "D key pressed" << std::endl;
+                win->_snake->callback_set_dir(1, 0); // Move right (y, x>0)
+                break;
+            case GLFW_KEY_UP:
+                std::cout << "up key pressed" << std::endl;
+                win->_snake->callback_set_dir(0, 2); // Move up (y<0, x)
+                break;
+            case GLFW_KEY_DOWN:
+                std::cout << "down key pressed" << std::endl;
+                win->_snake->callback_set_dir(0, 1); // Move down (y>0, x)
+                break;
+            case GLFW_KEY_LEFT:
+                std::cout << "left key pressed" << std::endl;
+                win->_snake->callback_set_dir(2, 0); // Move left (y, x<0)
+                break;
+            case GLFW_KEY_RIGHT:
+                std::cout << "right key pressed" << std::endl;
+                win->_snake->callback_set_dir(1, 0); // Move right (y, x>0)
+                break;
+            }
+        }
+    }
+
+    // Function to manage window x close buttom callback 
+    static void window_close_callback(GLFWwindow* window) {
+        std::cout << "Window close button clicked" << std::endl;
+        Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+        if (win) {
+            win->_menu->callback_pause(); //Pause game
+            win->terminate(); // Call your cleanup function
+        }
+    }
+
 
 };

@@ -7,6 +7,7 @@
     <ClCompile Include="src\frontend\VBO.cpp" />
     <ClCompile Include="src\frontend\VAO.cpp" />
     <ClCompile Include="src\frontend\EBO.cpp" />
+    <ClCompile Include="src\Menu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Snake.cpp" />
