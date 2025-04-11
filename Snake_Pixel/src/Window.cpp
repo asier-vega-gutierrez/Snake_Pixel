@@ -13,6 +13,7 @@
 #include "Cell.cpp"
 #include "Snake.cpp"
 #include "Menu.cpp"
+#include "Map.cpp"
 
 
 
@@ -28,14 +29,14 @@ private:
     int _gridSize = {};
     // Calculate the size of each cell in the grid
     const float _cellSize = {};
-    // All filled cells on grid 
-    std::vector<std::vector<Cell>> _cells = {};
     // Flag to indicate when the screen needs to be updated
     bool updateWindow = false;
 	// Snake object
     Snake* _snake = {};
 	// Menu object
 	Menu* _menu = {};
+    // map object
+    Map* _map = {};
 
     // Vertices for cells in grid (can be updatables)
 	std::vector<GLfloat> gridBoxesVerticesType1 = {};
@@ -49,12 +50,13 @@ public:
 	Window() = default;
 
     // Constructor
-    Window(int gridSize, Snake* snake, Menu* menu) :
+    Window(int gridSize, Snake* snake, Menu* menu, Map* map) :
         _gridSize(gridSize + 1),
         _cellSize(2.0f / (gridSize)),
-        _cells(gridSize + 1, std::vector<Cell>(gridSize + 1)),
+        //_cells(gridSize + 1, std::vector<Cell>(gridSize + 1)),
         _snake(snake),
-        _menu(menu){
+        _menu(menu),
+        _map(map){
 
         // Configure glfw
         glfwInit();
@@ -64,8 +66,8 @@ public:
         // Using core profile 
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         // Set default map borders
-        set_up_cells();
-		set_up_borders();
+        _map->set_up_cells();
+		_map->set_up_borders();
     }
 
     // Destructor 
@@ -240,7 +242,7 @@ private:
         for (int i = 0; i < _gridSize; ++i) {
             for (int j = 0; j < _gridSize; ++j) {
                 // For each cell stored and its type is selected generate the box vertices (2 triangles)
-                Cell& cell = _cells[i][j];
+				Cell cell = _map->get_cell(i, j);
                 if (cell.get_type() == selectedType) {
                     GLfloat* boxVertices = generate_box(-1.0f + _cellSize / 2.0f + cell.get_x() * _cellSize, -1.0f + _cellSize / 2.0f + cell.get_y() * _cellSize);
                     for (int j = 0; j < 6 * 3; j++) {
@@ -259,50 +261,8 @@ private:
         for (int i = 0; i < _gridSize; ++i) {
             for (int j = 0; j < _gridSize; ++j) {
                 Cell cell(i, j, 0, true);
-                _cells[i][j] = cell;
-            }
-        }
-		return 0;
-    }
-
-    // Function to set up map bordes type 1
-	int set_up_borders() {
-        // Set borders of the grid to cell type 1
-        for (int i = 0; i < _gridSize; ++i) {
-            // Top border
-            Cell cell_h_top(i, 0, 1, false);
-            _cells[i][0] = cell_h_top;
-            // Bottom border
-            Cell cell_h_bottom(i, _gridSize - 2, 1, false);
-            _cells[i][_gridSize - 1] = cell_h_bottom;
-            // Left border
-            Cell cell_v_left(0, i, 1, false);
-            _cells[0][i] = cell_v_left;
-            // Right border
-            Cell cell_v_right(_gridSize - 2, i, 1, false);
-            _cells[_gridSize - 2][i] = cell_v_right;
-        }
-        return 0;
-    }
-
-    // Function to set a snake object on the grid vector
-    int set_snake() {
-        for (Cell cell : _snake->get_body()) {
-            _cells[cell.get_x()][cell.get_y()] = cell;
-            //std::cout << "Snake cell at (" << cell.get_x() << ", " << cell.get_y() << ")" << std::endl;
-        }
-        return 0;
-    }
-
-	// Function to set all editable cells to type 0 (empty)
-    int set_cells_empty() {
-        // Set al editable cells to type 0 (empty)
-        for (int i = 0; i < _gridSize; ++i) {
-            for (int j = 0; j < _gridSize; ++j) {
-                Cell cell(i, j, 0, true);
-                if (_cells[i][j].get_editable() == true) {
-                    _cells[i][j] = cell;
-                }
+				_map->set_cell(i, j, cell);
+                //_cells[i][j] = cell;
             }
         }
 		return 0;
@@ -312,8 +272,8 @@ private:
     void update(VAO& boxVAOType1, VBO& boxVBOType1, VAO& boxVAOType2, VBO& boxVBOType2, VAO& boxVAOType3, VBO& boxVBOType3) {
        
 		// Recall set snake to update the snake position from backend iinformation
-        set_cells_empty();
-        set_snake();
+        _map->set_cells_empty();
+        _map->set_snake();
 
         // Generate and link VBOs to VAOs
 		// Generate grid boxes vertices for each cell type 1

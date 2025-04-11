@@ -4,7 +4,8 @@
 #include <chrono>
 #include <thread>
 #include <vector>
-
+#include <atomic>
+#include <iostream>
 #include "Cell.cpp"
 
 // Calss to manga snake and its movemtne

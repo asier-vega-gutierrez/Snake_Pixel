@@ -153,6 +153,7 @@
     <ClCompile Include="src\frontend\VBO.cpp" />
     <ClCompile Include="src\frontend\glad.c" />
     <ClCompile Include="src\MAIN.cpp" />
+    <ClCompile Include="src\Map.cpp" />
     <ClCompile Include="src\Menu.cpp" />
   </ItemGroup>
   <ItemGroup>

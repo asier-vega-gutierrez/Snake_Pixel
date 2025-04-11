@@ -5,6 +5,7 @@
 #include "Window.cpp"
 #include "Snake.cpp"
 #include "Menu.cpp"
+#include "Map.cpp"
 
 
 
@@ -16,7 +17,9 @@ int main() {
 
 	Menu* menu = new Menu(snake);
 
-    Window screen(map_size, snake, menu);
+	Map* map = new Map(map_size, snake);
+
+    Window screen(map_size, snake, menu, map);
 
     screen.load();
 
