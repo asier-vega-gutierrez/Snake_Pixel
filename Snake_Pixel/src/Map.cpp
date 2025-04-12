@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "Cell.cpp"
-#include "Snake.cpp"	
+//#include "Snake.cpp"	
 
 // Class to manage cells vector (2D map)
 class Map {
@@ -12,16 +12,16 @@ private:
 	// Grid size
 	int _gridSize = {};
 	// Snake object
-	Snake* _snake = {};
+	//Snake* _snake = {};
 
 public:
 	// Default constructor
 	Map() = default;
 	// Constructor
-	Map(int gridSize, Snake* snake) :
+	Map(int gridSize) :
 		_gridSize(gridSize + 1),
-		_cells(gridSize + 1, std::vector<Cell>(gridSize + 1)),
-		_snake(snake){
+		_cells(gridSize + 1, std::vector<Cell>(gridSize + 1)){
+		//_snake(snake){
 
 	}
 
@@ -85,15 +85,4 @@ public:
 		}
 		return 0;
 	}
-
-	// Function to set a snake object on the grid vector
-	int set_snake() {
-		for (Cell cell : _snake->get_body()) {
-			_cells[cell.get_x()][cell.get_y()] = cell;
-			//std::cout << "Snake cell at (" << cell.get_x() << ", " << cell.get_y() << ")" << std::endl;
-		}
-		return 0;
-	}
-
-
 };

@@ -5,7 +5,7 @@
 
 class Menu {
 private:
-	int _game_state = 0; // 0: not started, 1: pauseed, 2: runining
+	int _game_state = 0; // 0: not started, 1: pauseed, 2: runining, 3:need reset
 	// Snake object
 	Snake* _snake;
 
@@ -15,7 +15,6 @@ public:
 	// Constructor
 	Menu(Snake* snake) :
 		_snake(snake){
-
 	}
 
 	// Callback function to handle start
@@ -39,8 +38,20 @@ public:
 		_snake->callback_pause_snake();
 	}
 
+	// Function to control de snake lose
+	void check_lose_state() {
+		if (_snake->get_lose() == true) {
+			std::cout << "Game Over" << std::endl;
+			_game_state = 3;
+		}
+	}
 
-
+	// Callback function to handle reset
+	void callback_reset() {
+		std::cout << "Resetting game..." << std::endl;
+		_game_state = 0;
+		_snake->callback_reset();
+	}
 
 
 };

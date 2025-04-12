@@ -12,12 +12,12 @@
 int main() {
 
 	int map_size = 50;
+	
+	Map* map = new Map(map_size);
 
-    Snake* snake = new Snake(map_size);
+    Snake* snake = new Snake(map_size, map);
 
 	Menu* menu = new Menu(snake);
-
-	Map* map = new Map(map_size, snake);
 
     Window screen(map_size, snake, menu, map);
 

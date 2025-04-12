@@ -262,7 +262,6 @@ private:
             for (int j = 0; j < _gridSize; ++j) {
                 Cell cell(i, j, 0, true);
 				_map->set_cell(i, j, cell);
-                //_cells[i][j] = cell;
             }
         }
 		return 0;
@@ -273,10 +272,11 @@ private:
        
 		// Recall set snake to update the snake position from backend iinformation
         _map->set_cells_empty();
-        _map->set_snake();
+        _snake->set_snake();
+        _menu->check_lose_state();
 
         // Generate and link VBOs to VAOs
-		// Generate grid boxes vertices for each cell type 1
+        // Generate grid boxes vertices for each cell type 1
         gridBoxesVerticesType1 = {};
         gridBoxesVerticesType1 = generate_grid_boxes_vertices(1);
         boxVBOType1.Delete();
@@ -357,6 +357,10 @@ private:
                 std::cout << "right key pressed" << std::endl;
                 win->_snake->callback_set_dir(1, 0); // Move right (y, x>0)
                 break;
+			case GLFW_KEY_R:
+				std::cout << "R key pressed" << std::endl;
+				win->_menu->callback_reset(); // Reset game
+				break;
             }
         }
     }
