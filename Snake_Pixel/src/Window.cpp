@@ -274,6 +274,7 @@ private:
         _map->set_cells_empty();
         _snake->set_snake();
         _menu->check_lose_state();
+        _map->set_food();
 
         // Generate and link VBOs to VAOs
         // Generate grid boxes vertices for each cell type 1

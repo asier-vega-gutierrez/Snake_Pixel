@@ -113,6 +113,7 @@ public:
 		stop_thread();
 		_stop = false;
 		_move == false;
+		_map->set_food_flag(false);
 		// Clear the snake body
 		_body.clear();
 		// Reset the direction
@@ -162,9 +163,9 @@ private:
 				// Itereate only if the tread is not stopped
 				std::this_thread::sleep_for(std::chrono::milliseconds(_speed));
 				// Move snake
-				snake_move();
+				snake_move();		
 				// Check if snake losing state
-				snake_check_lose();
+				snake_check_next_cell();
 			}
 		}
 	}
@@ -201,14 +202,30 @@ private:
 	}
 
 	// Function to check if the snake is losing
-	bool snake_check_lose() {
+	bool snake_check_next_cell() {
+		// read the next cell value
 		Cell actual_map_cell = _map->get_cell(_body[0].get_x(), _body[0].get_y());
-		// if hit wall
+		// If hit the wall set lose flag to true
 		if (actual_map_cell.get_type() == 1) {
 			callback_pause_snake();
 			lose = true;
 		}
+		// If hit the snake body set lose flag to true
+		
+		// If eat food vall map to generate new food and grow snake body once
+		if (actual_map_cell.get_type() == 3) {
+			_map->set_food_flag(false);
+			snake_grow();
+		}
 		return true;
+	}
+
+	void snake_grow() {
+		// Get the last cell of the snake
+		Cell last_cell = _body.back();
+		// Add a new cell to the snake body
+		_body.push_back(Cell(last_cell.get_x(), last_cell.get_y(), 2, true));
+		std::cout << "Snake grew to: " << _body.size() << std::endl;
 	}
 
 };

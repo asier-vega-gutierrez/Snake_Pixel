@@ -1,8 +1,10 @@
 #pragma once
 
 #include <vector>
+#include <random> 
+#include <iostream>
 #include "Cell.cpp"
-//#include "Snake.cpp"	
+
 
 // Class to manage cells vector (2D map)
 class Map {
@@ -11,8 +13,7 @@ private:
 	std::vector<std::vector<Cell>> _cells = {};
 	// Grid size
 	int _gridSize = {};
-	// Snake object
-	//Snake* _snake = {};
+	bool _food_flag = false;
 
 public:
 	// Default constructor
@@ -21,13 +22,7 @@ public:
 	Map(int gridSize) :
 		_gridSize(gridSize + 1),
 		_cells(gridSize + 1, std::vector<Cell>(gridSize + 1)){
-		//_snake(snake){
 
-	}
-
-	// Destructor
-	~Map() {
-		// Destructor logic if needed
 	}
 
 	// Function to get a cell
@@ -38,6 +33,9 @@ public:
 	// Function to set a cell
 	void set_cell(int x, int y, Cell cell) {
 		_cells[x][y] = cell;
+	}
+	void set_food_flag(bool food_flag) {
+		_food_flag = food_flag;
 	}
 
 	// Function to set up cell to type 0 (empty)
@@ -84,5 +82,27 @@ public:
 			}
 		}
 		return 0;
+	}
+
+	void set_food() {
+		if (_food_flag == false) {
+			// Create a random number generator
+			std::random_device rd; // Seed
+			std::mt19937 gen(rd()); // Mersenne Twister engine
+			std::uniform_int_distribution<> dis(1, _gridSize - 2); // Range: avoid borders
+
+			int x, y;
+			do {
+				x = dis(gen); // Generate random x
+				y = dis(gen); // Generate random y
+			} while (_cells[x][y].get_type() != 0); // Ensure the cell is empty
+
+			// Set the food cell
+			Cell foodCell(x, y, 3, false); // Type 3 for food
+			set_cell(x, y, foodCell);
+
+			_food_flag = true;
+			std::cout << "Food set at: (" << x << ", " << y << ")" << std::endl;
+		}
 	}
 };

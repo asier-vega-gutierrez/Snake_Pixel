@@ -25,5 +25,6 @@ int main() {
 
     delete menu;
     delete snake;
+    delete map;
 
 }
