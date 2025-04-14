@@ -9,18 +9,6 @@
 
 int main() {
 
-    //// Load the YAML configuration file
-    //YAML::Node config = YAML::LoadFile("config.yaml");
-
-    //// Read map size and game speed from the configuration
-    //int map_size = config["window"]["map_size"].as<int>();
-    //int game_speed = config["game"]["speed"].as<int>();
-
-    //// Print the values to verify they are loaded correctly
-    //std::cout << "Map Size: " << map_size << std::endl;
-    //std::cout << "Game Speed: " << game_speed << " ms" << std::endl;
-
-
 	int map_size = 50;
 	
 	Map* map = new Map(map_size);
