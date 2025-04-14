@@ -1,15 +1,25 @@
 
-#include <iostream>
-#include <string> 
 
 #include "Window.cpp"
-#include "Snake.cpp"
-#include "Menu.cpp"
-#include "Map.cpp"
-
+#include "backend/Snake.cpp"
+#include "backend/Menu.cpp"
+#include "backend/Map.cpp"
+#include <yaml-cpp/yaml.h>
 
 
 int main() {
+
+    //// Load the YAML configuration file
+    //YAML::Node config = YAML::LoadFile("config.yaml");
+
+    //// Read map size and game speed from the configuration
+    //int map_size = config["window"]["map_size"].as<int>();
+    //int game_speed = config["game"]["speed"].as<int>();
+
+    //// Print the values to verify they are loaded correctly
+    //std::cout << "Map Size: " << map_size << std::endl;
+    //std::cout << "Game Speed: " << game_speed << " ms" << std::endl;
+
 
 	int map_size = 50;
 	

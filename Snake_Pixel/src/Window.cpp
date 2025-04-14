@@ -10,10 +10,10 @@
 #include "frontend/VBO.h"
 #include "frontend/EBO.h"
 #include "frontend/gladcode.h"
-#include "Cell.cpp"
-#include "Snake.cpp"
-#include "Menu.cpp"
-#include "Map.cpp"
+#include "backend/Cell.cpp"
+#include "backend/Snake.cpp"
+#include "backend/Menu.cpp"
+#include "backend/Map.cpp"
 
 
 
@@ -78,6 +78,10 @@ public:
 	// Function to load the window
     int load() {
         // CONFIGURE BASE WINDOW
+        
+        // Disable window resizing
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+        
         // Create glfw window object
         _window = glfwCreateWindow(width, height, title, NULL, NULL);
         if (_window == NULL) {
@@ -255,22 +259,10 @@ private:
         return gridBoxesVertices;
     }
 
-	// Function to set up cell to type 0 (empty)
-    int set_up_cells() {
-        // Set all cells to type 0 (empty)
-        for (int i = 0; i < _gridSize; ++i) {
-            for (int j = 0; j < _gridSize; ++j) {
-                Cell cell(i, j, 0, true);
-				_map->set_cell(i, j, cell);
-            }
-        }
-		return 0;
-    }
-
 	// Function to update the window with new information
     void update(VAO& boxVAOType1, VBO& boxVBOType1, VAO& boxVAOType2, VBO& boxVBOType2, VAO& boxVAOType3, VBO& boxVBOType3) {
        
-		// Recall set snake to update the snake position from backend iinformation
+		// Recall set snake to update the snake position from backend information
         _map->set_cells_empty();
         _snake->set_snake();
         _menu->check_lose_state();
@@ -360,6 +352,7 @@ private:
                 break;
 			case GLFW_KEY_R:
 				std::cout << "R key pressed" << std::endl;
+				win->_menu->callback_pause(); // Pause game
 				win->_menu->callback_reset(); // Reset game
 				break;
             }
@@ -375,6 +368,5 @@ private:
             win->terminate(); // Call your cleanup function
         }
     }
-
 
 };

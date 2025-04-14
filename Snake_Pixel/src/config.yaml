@@ -1,0 +1,7 @@
+# Configuration for the Snake Game
+
+window:
+  map_size: 800       # Square the game window in pixels
+
+game:
+  speed: 100       # Game speed in milliseconds (time between snake moves)

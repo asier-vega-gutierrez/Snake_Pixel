@@ -153,16 +153,15 @@
     <ClCompile Include="src\frontend\VBO.cpp" />
     <ClCompile Include="src\frontend\glad.c" />
     <ClCompile Include="src\MAIN.cpp" />
-    <ClCompile Include="src\Map.cpp" />
-    <ClCompile Include="src\Menu.cpp" />
+    <ClCompile Include="src\backend\Map.cpp" />
+    <ClCompile Include="src\backend\Menu.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\constants.h" />
-    <ClInclude Include="src\Cell.cpp" />
+    <ClInclude Include="src\backend\Cell.cpp" />
     <ClInclude Include="src\frontend\EBO.h" />
     <ClInclude Include="src\frontend\gladcode.h" />
     <ClInclude Include="src\frontend\Shader.h" />
-    <ClInclude Include="src\Snake.cpp" />
+    <ClInclude Include="src\backend\Snake.cpp" />
     <ClInclude Include="src\frontend\VAO.h" />
     <ClInclude Include="src\frontend\VBO.h" />
     <ClInclude Include="src\Window.cpp" />
